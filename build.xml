@@ -1,12 +1,13 @@
 <project name="T7017-PhotoBooth" basedir="." default="jar">
-    <property name="release"     value="0.1"/>
-    <property name="archive.dir" value="archive"/>
-	<property name="src.dir"     value="src/main/java"/>
-	<property name="build.dir"   value="build"/>
-	<property name="lib.dir"     value="lib"/>
-    <property name="main-class"  value="org.fogrobotics.photobooth.PhotoBooth"/>
-    <property name="jar.dir"    value="${archive.dir}/${release}"/>
-	<property name="jar.file"    value="${jar.dir}/photobooth.jar"/>
+    <property name="release"       value="0.1"/>
+    <property name="archive.dir"   value="archive"/>
+	<property name="src.dir"       value="src/main/java"/>
+	<property name="resources.dir" value="src/main/resources"/>
+	<property name="build.dir"     value="build"/>
+	<property name="lib.dir"       value="lib"/>
+    <property name="main-class"    value="org.fogrobotics.photobooth.PhotoBooth"/>
+    <property name="jar.dir"       value="${archive.dir}/${release}"/>
+	<property name="jar.file"      value="${jar.dir}/photobooth.jar"/>
 	
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -28,6 +29,7 @@
         <mkdir dir="${lib.dir}"/>
         <jar destfile="${jar.file}" basedir="${build.dir}">
             <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+            <fileset dir="${resources.dir}" />
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
