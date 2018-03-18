@@ -1,0 +1,37 @@
+<project name="T7017-PhotoBooth" basedir="." default="jar">
+    <property name="release"     value="0.1"/>
+    <property name="archive.dir" value="archive"/>
+	<property name="src.dir"     value="src/main/java"/>
+	<property name="build.dir"   value="build"/>
+	<property name="lib.dir"     value="lib"/>
+    <property name="main-class"  value="org.fogrobotics.photobooth.PhotoBooth"/>
+    <property name="jar.dir"    value="${archive.dir}/${release}"/>
+	<property name="jar.file"    value="${jar.dir}/photobooth.jar"/>
+	
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${jar.file}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${jar.dir}"/>
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" source="1.8" target="1.8" debug="on">
+          <classpath>
+            <path location="${lib.dir}/javax.mail-1.5.5.jar"/>
+          </classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${lib.dir}"/>
+        <jar destfile="${jar.file}" basedir="${build.dir}">
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+</project>
