@@ -1,6 +1,7 @@
-package org.fogrobotics.photobooth.email;
+package org.fogrobotics.photobooth.model.email;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
@@ -22,10 +23,11 @@ import javax.mail.internet.MimeMultipart;
 
 import org.fogrobotics.photobooth.model.BoothModel;
 import org.fogrobotics.photobooth.model.customers.Customer;
-import org.fogrobotics.photobooth.photo.Photo;
+import org.fogrobotics.photobooth.model.photo.Photo;
 
 public class EmailManager
 {
+  private ArrayList<EmailMemoListener> memoListeners = new ArrayList<EmailMemoListener>();
 
   public EmailManager(BoothModel model)
   {
@@ -40,7 +42,7 @@ public class EmailManager
       msg.addHeader("format", "flowed");
       msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-      msg.setFrom(new InternetAddress("no_reply@fogrobotics.org", "NoReply-JD"));
+      msg.setFrom(new InternetAddress("no_reply@fogrobotics.org", "NoReply-FOG-Robotics"));
 
       msg.setReplyTo(InternetAddress.parse("no_reply@fogrobotics.org", false));
 
@@ -80,7 +82,7 @@ public class EmailManager
 
       // Send message
       Transport.send(msg);
-      System.out.println("EMail Sent Successfully with image!!");
+      setDisplayMemo("EMail Sent Successfully with image!!");
   } catch (MessagingException e) {
       e.printStackTrace();
   } catch (UnsupportedEncodingException e) {
@@ -107,6 +109,18 @@ public class EmailManager
       }
     };
     return Session.getInstance(props, auth);
+  }
+
+  public void setDisplayMemo(String memo)
+  {
+    for (EmailMemoListener lis : memoListeners) {
+      lis.emailMemoChange(memo);
+    }
+  }
+
+  public void addEmailMemoListener(EmailMemoListener lis)
+  {
+    memoListeners.add(lis);
   }
 
 }

@@ -2,6 +2,7 @@ package org.fogrobotics.photobooth.display;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,14 +17,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.fogrobotics.photobooth.controller.BoothController;
+import org.fogrobotics.photobooth.model.BoothModel;
 import org.fogrobotics.photobooth.model.customers.Customer;
-import org.fogrobotics.photobooth.model.customers.CustomerManager;
 import org.fogrobotics.photobooth.model.customers.CustomerUpdatesListener;
-import org.fogrobotics.photobooth.photo.Photo;
-import org.fogrobotics.photobooth.photo.PhotoManager;
-import org.fogrobotics.photobooth.photo.PhotoUpdatesListener;
+import org.fogrobotics.photobooth.model.email.EmailMemoListener;
+import org.fogrobotics.photobooth.model.photo.Photo;
+import org.fogrobotics.photobooth.model.photo.PhotoMemoListener;
+import org.fogrobotics.photobooth.model.photo.PhotoUpdatesListener;
 
-public class BoothControlPanel extends JPanel implements CustomerUpdatesListener, ListSelectionListener, ActionListener, PhotoUpdatesListener
+public class BoothControlPanel extends JPanel 
+implements CustomerUpdatesListener, ListSelectionListener, ActionListener, PhotoUpdatesListener, EmailMemoListener, PhotoMemoListener
 {
   private static final long serialVersionUID = 8726180160354725859L;
   private DefaultListModel<Customer> mCustomers = new DefaultListModel<Customer>();
@@ -36,33 +39,46 @@ public class BoothControlPanel extends JPanel implements CustomerUpdatesListener
   private Customer active;
   private BoothController controller;
   private Photo activePhoto;
+  private TextField tfMemo = new TextField();
+  private PhotoPanel photoPanel = new PhotoPanel();
 
-  public BoothControlPanel(CustomerManager cMgr, PhotoManager pMgr, BoothController controller)
+  public BoothControlPanel(BoothModel model, BoothController controller)
   {
-    cMgr.addCustomerUpdatesListener(this);
-    pMgr.addPhotoUpdatesListener(this);
+    model.addCustomerUpdatesListener(this);
+    model.addPhotoUpdatesListener(this);
+    model.addPhotoMemoListener(this);
+    model.addEmailMemoListener(this);
     this.controller = controller;
-    add(new JLabel("Customers: "));
-    add(lCustomers);
+    
+    setLayout(new BorderLayout());
+    JPanel main = new JPanel();
+    add(main, BorderLayout.CENTER);
+    add(tfMemo, BorderLayout.SOUTH);
+    tfMemo.setEditable(false);
+    
+    main.add(new JLabel("Customers: "));
+    main.add(lCustomers);
     lCustomers.addListSelectionListener(this);
     lCustomers.setVisibleRowCount(5);
     
     JPanel p = new JPanel();
     p.setLayout(new GridLayout(0, 1));
-    add(p, BorderLayout.CENTER);
+    main.add(p, BorderLayout.CENTER);
 
     addCombined(p, new JLabel("Name: "), lbCustomerName);
 
     addCombined(p, new JLabel("Team Number: "), lbTeamNumber);
 
     addCombined(p, new JLabel("Email: "), lbEmailAddress);
-
-    add(bTakePicture);
+    
+    main.add(bTakePicture);
     bTakePicture.addActionListener(this);
     bTakePicture.setEnabled(false);
-    add(bSendEmail);
+    main.add(bSendEmail);
     bSendEmail.addActionListener(this);
     bSendEmail.setEnabled(false);
+    
+    main.add(photoPanel);
   }
 
   @Override
@@ -131,7 +147,20 @@ public class BoothControlPanel extends JPanel implements CustomerUpdatesListener
   @Override
   public void update(Photo p)
   {
-    this.activePhoto = p;
+    activePhoto = p;
+    photoPanel.set(p);
     updateDisplay();
+  }
+
+  @Override
+  public void emailMemoChange(String memo)
+  {
+    tfMemo.setText(memo);
+  }
+
+  @Override
+  public void photoMemoChange(String memo)
+  {
+    tfMemo.setText(memo);
   }
 }

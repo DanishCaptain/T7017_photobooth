@@ -19,9 +19,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.fogrobotics.photobooth.controller.BoothController;
+import org.fogrobotics.photobooth.model.BoothModel;
 import org.fogrobotics.photobooth.model.DatabaseBoothException;
 import org.fogrobotics.photobooth.model.customers.Customer;
-import org.fogrobotics.photobooth.model.customers.CustomerManager;
 import org.fogrobotics.photobooth.model.customers.CustomerUpdatesListener;
 
 public class CustomerPanel extends JPanel implements CustomerUpdatesListener, ListSelectionListener, ActionListener
@@ -37,10 +37,11 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
   private JTextField tfEmailAddress = new JTextField(50);
   private JButton bNewCustomer = new JButton("New Customer");
   private JButton bSave = new JButton("Save");
+  private JButton bCancel = new JButton("Cancel");
 
-  public CustomerPanel(CustomerManager cMgr, BoothController controller)
+  public CustomerPanel(BoothModel model, BoothController controller)
   {
-    cMgr.addCustomerUpdatesListener(this);
+    model.addCustomerUpdatesListener(this);
     this.controller = controller;
     
     setLayout(new BorderLayout());
@@ -66,13 +67,19 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
 
     addCombined(p, new JLabel("Email: "), tfEmailAddress);
 
-    p.add(bSave);
+    JPanel pButtons = new JPanel();
+    p.add(pButtons);
+    pButtons.add(bSave);
+    pButtons.add(bCancel);
     tfCustomerName.setEditable(false);
     tfTeamNumber.setEditable(false);
     tfEmailAddress.setEditable(false);
     bNewCustomer.addActionListener(this);
+        
     bSave.addActionListener(this);
     bSave.setEnabled(false);
+    bCancel.addActionListener(this);
+    bCancel.setEnabled(false);
   }
 
   private void addCombined(JPanel panel, JComponent c1, JComponent c2)
@@ -97,6 +104,7 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
   {
     if (active == null) {
       bSave.setEnabled(false);
+      bCancel.setEnabled(false);
       bNewCustomer.setEnabled(true);
       lCustomerOid.setText("");
       tfCustomerName.setText("");
@@ -107,6 +115,7 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
       tfEmailAddress.setEditable(false);
     } else {
       bSave.setEnabled(true);
+      bCancel.setEnabled(true);
       bNewCustomer.setEnabled(false);
       if (active.getOid() == null) {
         lCustomerOid.setText("--<new>--");
@@ -133,7 +142,6 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
       updateDisplay();
     } else if (e.getSource() == bSave) {
       if (active != null) {
-        lCustomers.setSelectedIndex(-1);
         if (active.getOid() == null) {
           try
           {
@@ -156,8 +164,13 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
           }
         }
         active = null;
+        lCustomers.setSelectedIndex(-1);
         updateDisplay();
       }
+    } else if (e.getSource() == bCancel) {
+      active = null;
+      lCustomers.setSelectedIndex(-1);
+      updateDisplay();
     }
   }
 

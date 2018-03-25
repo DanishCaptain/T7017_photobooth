@@ -1,4 +1,4 @@
-package org.fogrobotics.photobooth.photo;
+package org.fogrobotics.photobooth.model.photo;
 
 public interface PhotoUpdatesListener
 {

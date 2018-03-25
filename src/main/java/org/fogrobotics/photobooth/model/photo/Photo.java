@@ -1,4 +1,4 @@
-package org.fogrobotics.photobooth.photo;
+package org.fogrobotics.photobooth.model.photo;
 
 import java.io.File;
 
@@ -12,6 +12,11 @@ public class Photo
   public void setCustomer(Customer c)
   {
     this.c = c;
+  }
+  
+  public Customer getCustomer()
+  {
+    return c;
   }
 
   public void setArtifact(File file)

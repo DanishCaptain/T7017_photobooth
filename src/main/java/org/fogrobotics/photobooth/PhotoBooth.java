@@ -3,11 +3,8 @@ package org.fogrobotics.photobooth;
 import org.fogrobotics.photobooth.common.PropertyBoothException;
 import org.fogrobotics.photobooth.controller.BoothController;
 import org.fogrobotics.photobooth.display.PhotoBoothDisplay;
-import org.fogrobotics.photobooth.email.EmailManager;
 import org.fogrobotics.photobooth.model.BoothModel;
 import org.fogrobotics.photobooth.model.DatabaseBoothException;
-import org.fogrobotics.photobooth.model.customers.CustomerManager;
-import org.fogrobotics.photobooth.photo.PhotoManager;
 
 public class PhotoBooth
 {
@@ -20,11 +17,8 @@ public class PhotoBooth
     try
     {
       model = new BoothModel();
-      PhotoManager photoManager = new PhotoManager(model);
-      CustomerManager customers = new CustomerManager(model);
-      EmailManager email = new EmailManager(model);
-      controller = new BoothController(model, photoManager, customers, email);
-      PhotoBoothDisplay display = new PhotoBoothDisplay(customers, photoManager, controller);
+      controller = new BoothController(model);
+      new PhotoBoothDisplay(model, controller);
 
     }
     catch (PropertyBoothException e)
