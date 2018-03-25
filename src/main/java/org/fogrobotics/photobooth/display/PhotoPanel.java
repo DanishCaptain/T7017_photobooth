@@ -14,7 +14,7 @@ public class PhotoPanel extends JPanel
 {
   private static final long serialVersionUID = -2308114501875313218L;
   private BufferedImage img;
-  
+
   public PhotoPanel()
   {
     setSize(500, 500);
@@ -22,10 +22,11 @@ public class PhotoPanel extends JPanel
   }
 
   @Override
-  public void paintComponent (Graphics g)
+  public void paintComponent(Graphics g)
   {
     super.paintComponent(g);
-    if (img != null) {
+    if (img != null)
+    {
       g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
     }
   }
@@ -33,9 +34,11 @@ public class PhotoPanel extends JPanel
   public void set(Photo p)
   {
     img = null;
-    if (p != null) {
+    if (p != null)
+    {
       File file = p.getArtiface();
-      if (file.exists()) {
+      if (file.exists())
+      {
         try
         {
           img = ImageIO.read(file);

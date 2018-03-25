@@ -18,13 +18,13 @@ public class PhotoBoothDisplay
     frame = new JFrame("7017 Photo Both");
     JTabbedPane tabs = new JTabbedPane();
     frame.add(tabs, BorderLayout.CENTER);
-    
+
     tabs.add("Photo Booth", new BoothControlPanel(model, controller));
     tabs.add("Customers", new CustomerPanel(model, controller));
-    frame.setSize(800,700);
+    frame.setSize(800, 700);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setVisible(true);
-//    frame.pack();
+    // frame.pack();
   }
 
 }

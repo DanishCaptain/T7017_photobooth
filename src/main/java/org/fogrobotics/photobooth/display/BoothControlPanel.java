@@ -25,8 +25,8 @@ import org.fogrobotics.photobooth.model.photo.Photo;
 import org.fogrobotics.photobooth.model.photo.PhotoMemoListener;
 import org.fogrobotics.photobooth.model.photo.PhotoUpdatesListener;
 
-public class BoothControlPanel extends JPanel 
-implements CustomerUpdatesListener, ListSelectionListener, ActionListener, PhotoUpdatesListener, EmailMemoListener, PhotoMemoListener
+public class BoothControlPanel extends JPanel implements CustomerUpdatesListener, ListSelectionListener, ActionListener,
+    PhotoUpdatesListener, EmailMemoListener, PhotoMemoListener
 {
   private static final long serialVersionUID = 8726180160354725859L;
   private DefaultListModel<Customer> mCustomers = new DefaultListModel<Customer>();
@@ -49,18 +49,18 @@ implements CustomerUpdatesListener, ListSelectionListener, ActionListener, Photo
     model.addPhotoMemoListener(this);
     model.addEmailMemoListener(this);
     this.controller = controller;
-    
+
     setLayout(new BorderLayout());
     JPanel main = new JPanel();
     add(main, BorderLayout.CENTER);
     add(tfMemo, BorderLayout.SOUTH);
     tfMemo.setEditable(false);
-    
+
     main.add(new JLabel("Customers: "));
     main.add(lCustomers);
     lCustomers.addListSelectionListener(this);
     lCustomers.setVisibleRowCount(5);
-    
+
     JPanel p = new JPanel();
     p.setLayout(new GridLayout(0, 1));
     main.add(p, BorderLayout.CENTER);
@@ -70,14 +70,14 @@ implements CustomerUpdatesListener, ListSelectionListener, ActionListener, Photo
     addCombined(p, new JLabel("Team Number: "), lbTeamNumber);
 
     addCombined(p, new JLabel("Email: "), lbEmailAddress);
-    
+
     main.add(bTakePicture);
     bTakePicture.addActionListener(this);
     bTakePicture.setEnabled(false);
     main.add(bSendEmail);
     bSendEmail.addActionListener(this);
     bSendEmail.setEnabled(false);
-    
+
     main.add(photoPanel);
   }
 
@@ -87,12 +87,13 @@ implements CustomerUpdatesListener, ListSelectionListener, ActionListener, Photo
     mCustomers.addElement(c);
     repaint();
   }
+
   @Override
   public void update(Customer c)
   {
     repaint();
   }
-  
+
   private void addCombined(JPanel panel, JComponent c1, JComponent c2)
   {
     JPanel p0 = new JPanel();
@@ -113,21 +114,27 @@ implements CustomerUpdatesListener, ListSelectionListener, ActionListener, Photo
 
   private void updateDisplay()
   {
-    if (active == null) {
+    if (active == null)
+    {
       bTakePicture.setEnabled(true);
       lbCustomerName.setText("");
       lbTeamNumber.setText("");
       lbEmailAddress.setText("");
-    } else {
+    }
+    else
+    {
       bTakePicture.setEnabled(true);
       lbCustomerName.setText(active.getName());
       lbTeamNumber.setText(active.getTeamNumber());
       lbEmailAddress.setText(active.getEmailAddress());
     }
-    if (activePhoto != null) {
+    if (activePhoto != null)
+    {
       bSendEmail.setEnabled(true);
-      
-    } else {
+
+    }
+    else
+    {
       bSendEmail.setEnabled(false);
     }
   }
@@ -135,10 +142,13 @@ implements CustomerUpdatesListener, ListSelectionListener, ActionListener, Photo
   @Override
   public void actionPerformed(ActionEvent e)
   {
-    if (e.getSource() == bSendEmail) {
+    if (e.getSource() == bSendEmail)
+    {
       controller.sendEmail(active, activePhoto);
       updateDisplay();
-    } else if (e.getSource() == bTakePicture) {
+    }
+    else if (e.getSource() == bTakePicture)
+    {
       controller.takePhoto(active);
       updateDisplay();
     }

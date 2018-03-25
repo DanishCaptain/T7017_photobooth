@@ -36,7 +36,8 @@ public class EmailManager
   public void sendEmail(Customer c, Photo p)
   {
     Session session = getSession();
-    try {
+    try
+    {
       MimeMessage msg = new MimeMessage(session);
       msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
       msg.addHeader("format", "flowed");
@@ -83,18 +84,22 @@ public class EmailManager
       // Send message
       Transport.send(msg);
       setDisplayMemo("EMail Sent Successfully with image!!");
-  } catch (MessagingException e) {
+    }
+    catch (MessagingException e)
+    {
       e.printStackTrace();
-  } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e)
+    {
       e.printStackTrace();
-  }
+    }
   }
 
   private Session getSession()
   {
     final String fromEmail = "photo@bombholtmagic.com"; // requires valid
     final String password = "frogs1frogs"; // correct password for gmail id
-    
+
     Properties props = new Properties();
     props.put("mail.smtp.host", "server335.serverquality.com"); // SMTP Host
     props.put("mail.smtp.port", "587"); // TLS Port
@@ -113,7 +118,8 @@ public class EmailManager
 
   public void setDisplayMemo(String memo)
   {
-    for (EmailMemoListener lis : memoListeners) {
+    for (EmailMemoListener lis : memoListeners)
+    {
       lis.emailMemoChange(memo);
     }
   }

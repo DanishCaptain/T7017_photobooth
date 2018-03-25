@@ -13,7 +13,7 @@ public class Photo
   {
     this.c = c;
   }
-  
+
   public Customer getCustomer()
   {
     return c;

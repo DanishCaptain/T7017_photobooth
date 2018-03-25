@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -23,12 +24,14 @@ import org.fogrobotics.photobooth.model.BoothModel;
 import org.fogrobotics.photobooth.model.DatabaseBoothException;
 import org.fogrobotics.photobooth.model.customers.Customer;
 import org.fogrobotics.photobooth.model.customers.CustomerUpdatesListener;
+import org.fogrobotics.photobooth.model.photo.Photo;
 
 public class CustomerPanel extends JPanel implements CustomerUpdatesListener, ListSelectionListener, ActionListener
 {
   private static final long serialVersionUID = 1224821954460879840L;
   private DefaultListModel<Customer> mCustomers = new DefaultListModel<Customer>();
   private JList<Customer> lCustomers = new JList<Customer>(mCustomers);
+  private BoothModel model;
   private BoothController controller;
   private Customer active;
   private JLabel lCustomerOid = new JLabel();
@@ -38,27 +41,32 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
   private JButton bNewCustomer = new JButton("New Customer");
   private JButton bSave = new JButton("Save");
   private JButton bCancel = new JButton("Cancel");
+  private DefaultListModel<Photo> mPhotos = new DefaultListModel<Photo>();
+  private JList<Photo> lPhotos = new JList<Photo>(mPhotos);
+  private PhotoPanel photoPanel = new PhotoPanel();
 
   public CustomerPanel(BoothModel model, BoothController controller)
   {
     model.addCustomerUpdatesListener(this);
+    this.model = model;
     this.controller = controller;
-    
+
     setLayout(new BorderLayout());
     JPanel p = new JPanel();
     p.setLayout(new GridLayout(0, 1));
     add(p, BorderLayout.CENTER);
-    
+
     JPanel p0 = new JPanel();
-    p0.setBorder(new TitledBorder("Customers: "));;
+    p0.setBorder(new TitledBorder("Customers: "));
+
     p.add(p0);
-    
+
     addCombined(p0, new JLabel(""), new JScrollPane(lCustomers));
     lCustomers.addListSelectionListener(this);
     lCustomers.setVisibleRowCount(5);
-    
+
     addCombined(p0, new JLabel(""), bNewCustomer);
-    
+
     addCombined(p, new JLabel("Id: "), lCustomerOid);
 
     addCombined(p, new JLabel("Name: "), tfCustomerName);
@@ -75,11 +83,20 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
     tfTeamNumber.setEditable(false);
     tfEmailAddress.setEditable(false);
     bNewCustomer.addActionListener(this);
-        
+
     bSave.addActionListener(this);
     bSave.setEnabled(false);
     bCancel.addActionListener(this);
     bCancel.setEnabled(false);
+    
+    p0 = new JPanel();
+    p0.setLayout(new BorderLayout());
+    p0.setBorder(new TitledBorder("Photos: "));
+    p.add(p0);
+    p0.add(new JScrollPane(lPhotos), BorderLayout.NORTH);
+    p0.add(photoPanel, BorderLayout.CENTER);
+    lPhotos.setVisibleRowCount(3);
+    lPhotos.addListSelectionListener(this);
   }
 
   private void addCombined(JPanel panel, JComponent c1, JComponent c2)
@@ -96,13 +113,32 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
   @Override
   public void valueChanged(ListSelectionEvent e)
   {
-    active = lCustomers.getSelectedValue();
-    updateDisplay();
+    if (e.getSource() == lCustomers) {
+      active = lCustomers.getSelectedValue();
+      mPhotos.clear();
+      try
+      {
+        List<Photo> list = model.getPhotoList(active);
+        for (Photo p : list) {
+          mPhotos.addElement(p);
+        }
+        photoPanel.repaint();
+      }
+      catch (DatabaseBoothException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      updateDisplay();
+    } else if (e.getSource() == lPhotos) {
+      photoPanel.set(lPhotos.getSelectedValue());
+    }
   }
 
   private void updateDisplay()
   {
-    if (active == null) {
+    if (active == null)
+    {
       bSave.setEnabled(false);
       bCancel.setEnabled(false);
       bNewCustomer.setEnabled(true);
@@ -113,13 +149,18 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
       tfCustomerName.setEditable(false);
       tfTeamNumber.setEditable(false);
       tfEmailAddress.setEditable(false);
-    } else {
+    }
+    else
+    {
       bSave.setEnabled(true);
       bCancel.setEnabled(true);
       bNewCustomer.setEnabled(false);
-      if (active.getOid() == null) {
+      if (active.getOid() == null)
+      {
         lCustomerOid.setText("--<new>--");
-      } else {
+      }
+      else
+      {
         lCustomerOid.setText(active.getOid().toString());
       }
       tfCustomerName.setText(active.getName());
@@ -135,14 +176,19 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
   @Override
   public void actionPerformed(ActionEvent e)
   {
-    if (e.getSource() == bNewCustomer) {
+    if (e.getSource() == bNewCustomer)
+    {
       this.lCustomers.setSelectedIndex(-1);
       active = new Customer();
-      
+
       updateDisplay();
-    } else if (e.getSource() == bSave) {
-      if (active != null) {
-        if (active.getOid() == null) {
+    }
+    else if (e.getSource() == bSave)
+    {
+      if (active != null)
+      {
+        if (active.getOid() == null)
+        {
           try
           {
             controller.addNew(tfCustomerName.getText(), tfTeamNumber.getText(), tfEmailAddress.getText());
@@ -152,10 +198,13 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
             // TODO Auto-generated catch block
             e1.printStackTrace();
           }
-        } else {
+        }
+        else
+        {
           try
           {
-            controller.update(lCustomerOid.getText(), tfCustomerName.getText(), tfTeamNumber.getText(), tfEmailAddress.getText());
+            controller.update(lCustomerOid.getText(), tfCustomerName.getText(), tfTeamNumber.getText(),
+                tfEmailAddress.getText());
           }
           catch (DatabaseBoothException e1)
           {
@@ -167,7 +216,9 @@ public class CustomerPanel extends JPanel implements CustomerUpdatesListener, Li
         lCustomers.setSelectedIndex(-1);
         updateDisplay();
       }
-    } else if (e.getSource() == bCancel) {
+    }
+    else if (e.getSource() == bCancel)
+    {
       active = null;
       lCustomers.setSelectedIndex(-1);
       updateDisplay();

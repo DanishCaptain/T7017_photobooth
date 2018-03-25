@@ -3,6 +3,7 @@ package org.fogrobotics.photobooth.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +31,8 @@ public class BoothModel
   private CustomerManager customers;
   private EmailManager email;
 
-  public BoothModel() throws PropertyBoothException, DatabaseBoothException {
+  public BoothModel() throws PropertyBoothException, DatabaseBoothException
+  {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
     try
     {
@@ -38,19 +40,20 @@ public class BoothModel
     }
     catch (IOException e)
     {
-      throw new PropertyBoothException("properties file ("+PROPERTIES_FILE_NAME+") not found.");
+      throw new PropertyBoothException("properties file (" + PROPERTIES_FILE_NAME + ") not found.");
     }
     photoLocation = new File(p.getProperty(TAG_PHOTO_LOCATION, "/opt/fogrobotics/booth"));
-    if (!photoLocation.exists()) {
+    if (!photoLocation.exists())
+    {
       photoLocation.mkdir();
     }
-    LOG.log(Level.INFO, "using location: "+photoLocation.getAbsolutePath());
+    LOG.log(Level.INFO, "using location: " + photoLocation.getAbsolutePath());
     store = new DerbyStore();
-    
+
     photoManager = new PhotoManager(this);
     customers = new CustomerManager(this);
     email = new EmailManager(this);
-    
+
   }
 
   public DatabaseStore getStore()
@@ -63,14 +66,15 @@ public class BoothModel
     customers.add(name, teamNumber, emailAddress);
   }
 
-  public void updateCustomer(String oid, String name, String teamNumber, String emailAddress) throws DatabaseBoothException
+  public void updateCustomer(String oid, String name, String teamNumber, String emailAddress)
+      throws DatabaseBoothException
   {
     customers.update(oid, name, teamNumber, emailAddress);
   }
 
   public void addCustomerUpdatesListener(CustomerUpdatesListener lis)
   {
-    customers.addCustomerUpdatesListener(lis);    
+    customers.addCustomerUpdatesListener(lis);
   }
 
   public void takePhoto(Customer c)
@@ -101,6 +105,11 @@ public class BoothModel
   public File getPhotoLocation()
   {
     return photoLocation;
+  }
+
+  public List<Photo> getPhotoList(Customer c) throws DatabaseBoothException
+  {
+    return photoManager.getPhotoList(c);
   }
 
 }

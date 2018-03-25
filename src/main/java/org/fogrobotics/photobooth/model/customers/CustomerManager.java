@@ -26,7 +26,8 @@ public class CustomerManager
   private void initData() throws DatabaseBoothException
   {
     List<Customer> initList = model.getStore().getCustomers();
-    for (Customer c: initList) {
+    for (Customer c : initList)
+    {
       cList.add(c);
       cMap.put(c.getOid().toString(), c);
       notifyAdded(c);
@@ -58,25 +59,30 @@ public class CustomerManager
 
   public void addCustomerUpdatesListener(CustomerUpdatesListener lis)
   {
-    synchronized (cListeners) {
-      for (Customer c : cList) {
+    synchronized (cListeners)
+    {
+      for (Customer c : cList)
+      {
         lis.addNew(c);
       }
       cListeners.add(lis);
     }
   }
-  
+
   public void removeCustomerUpdatesListener(CustomerUpdatesListener lis)
   {
-    synchronized (cListeners) {
+    synchronized (cListeners)
+    {
       cListeners.remove(lis);
     }
   }
 
   private void notifyAdded(Customer c)
   {
-    synchronized (cListeners) {
-      for (CustomerUpdatesListener lis : cListeners) {
+    synchronized (cListeners)
+    {
+      for (CustomerUpdatesListener lis : cListeners)
+      {
         lis.addNew(c);
       }
     }
@@ -84,11 +90,13 @@ public class CustomerManager
 
   private void notifyUpdated(Customer c)
   {
-    synchronized (cListeners) {
-      for (CustomerUpdatesListener lis : cListeners) {
+    synchronized (cListeners)
+    {
+      for (CustomerUpdatesListener lis : cListeners)
+      {
         lis.update(c);
       }
     }
   }
-  
+
 }

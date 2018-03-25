@@ -56,16 +56,20 @@ public class DerbyStore extends DatabaseStore
   @Override
   protected int translateError(SQLException e)
   {
-    switch (e.getErrorCode()) {
+    switch (e.getErrorCode())
+    {
       case 30000:
-        if (e.getMessage().contains("Syntax error")) {
+        if (e.getMessage().contains("Syntax error"))
+        {
           return SQL_SYNTAX_ERROR;
-          
-        } else {
+
+        }
+        else
+        {
           return TABLE_DOES_NOT_EXIST;
         }
       default:
-        System.out.println("unknown error: "+e.getErrorCode()+":"+e.getMessage());
+        System.out.println("unknown error: " + e.getErrorCode() + ":" + e.getMessage());
     }
     return Integer.MIN_VALUE;
   }

@@ -26,7 +26,7 @@ public class Customer
 
   public void setName(String name)
   {
-    this.name=name;
+    this.name = name;
   }
 
   public String getTeamNumber()
@@ -36,7 +36,7 @@ public class Customer
 
   public void setTeamNumber(String teamNumber)
   {
-    this.teamNumber=teamNumber;
+    this.teamNumber = teamNumber;
   }
 
   public String getEmailAddress()
@@ -48,11 +48,11 @@ public class Customer
   {
     this.email = email;
   }
-  
+
   @Override
   public String toString()
   {
-    return teamNumber+" "+name+" :: "+email;
+    return teamNumber + " " + name + " :: " + email;
   }
 
 }
