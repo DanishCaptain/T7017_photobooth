@@ -16,8 +16,9 @@ public class BoothModel
   private static final String TAG_PHOTO_LOCATION = "photo-archive-directory";
   private Properties p = new Properties();
   private File photoLocation;
+  private DatabaseStore store;
 
-  public BoothModel() throws PropertyBoothException {
+  public BoothModel() throws PropertyBoothException, DatabaseBoothException {
     InputStream is = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
     try
     {
@@ -29,8 +30,12 @@ public class BoothModel
     }
     photoLocation = new File(p.getProperty(TAG_PHOTO_LOCATION, "/etc/fogrobotics/booth"));
     LOG.log(Level.INFO, "using location: "+photoLocation.getAbsolutePath());
+    store = new DerbyStore();
   }
 
-  
-  
+  public DatabaseStore getStore()
+  {
+    return store;
+  }
+
 }
