@@ -29,4 +29,9 @@ public class Photo
     return file;
   }
 
+  @Override
+  public String toString()
+  {
+    return c.getName()+":"+file.getName();
+  }
 }
